@@ -1,0 +1,765 @@
+﻿--------------------------------------------------/SAI/--------------------------------------------------------------------------------------------------------------------
+--CREATE USER TABLE--
+CREATE TABLE tbl_USER(USER_ID INT PRIMARY KEY, FIRST_NAME VARCHAR(30), LAST_NAME VARCHAR(30), USER_NAME VARCHAR(30) NOT NULL, EMAIL_ID VARCHAR(30) NOT NULL, PHONE_NO VARCHAR(10) NOT NULL, PASSWORD VARCHAR(15) NOT NULL,CREATED_DATE DATETIME,LAST_MODIFIED DATETIME,LAST_LOGIN DATETIME);
+
+--CREATE SEQUENCE FOR USER_ID--
+CREATE SEQUENCE seq_USER_ID AS INT START WITH 1001 INCREMENT BY 1; 
+
+--INSERTING VALUES IN USER TABLE--
+INSERT INTO tbl_USER(USER_ID,FIRST_NAME,LAST_NAME,USER_NAME,EMAIL_ID,PHONE_NO,PASSWORD,CREATED_DATE) VALUES(NEXT VALUE FOR seq_USER_ID,'HEMANTH','RAM','HEMANTH17','zerogravity72@gmail.com','9766583442','sheaman@72',GETDATE()); 
+INSERT INTO tbl_USER(USER_ID,FIRST_NAME,LAST_NAME,USER_NAME,EMAIL_ID,PHONE_NO,PASSWORD,CREATED_DATE) VALUES(NEXT VALUE FOR seq_USER_ID,'SAI','SANJEEV','SAI25','sai7225@gmail.com','9980672746','Sais$25',GETDATE()); 
+INSERT INTO tbl_USER(USER_ID,FIRST_NAME,LAST_NAME,USER_NAME,EMAIL_ID,PHONE_NO,PASSWORD,CREATED_DATE) VALUES(NEXT VALUE FOR seq_USER_ID,'BALAJI','SUNDARRAJAN','BALAJI6','balajis6332@gmail.com','9897899880','balajileads_44',GETDATE()); 
+INSERT INTO tbl_USER(USER_ID,FIRST_NAME,LAST_NAME,USER_NAME,EMAIL_ID,PHONE_NO,PASSWORD,CREATED_DATE) VALUES(NEXT VALUE FOR seq_USER_ID,'LAVANYA','RAJAGOPALAN','LAVANYA1225','lav.6522nya@gmail.com','9980352271','lavs$iscool',GETDATE()); 
+INSERT INTO tbl_USER(USER_ID,FIRST_NAME,LAST_NAME,USER_NAME,EMAIL_ID,PHONE_NO,PASSWORD,CREATED_DATE) VALUES(NEXT VALUE FOR seq_USER_ID,'PREETHI','CVV','PREETHI23','preethicvv@gmail.com','9640782444','preetz#cvv89',GETDATE()); 
+INSERT INTO tbl_USER(USER_ID,FIRST_NAME,LAST_NAME,USER_NAME,EMAIL_ID,PHONE_NO,PASSWORD,CREATED_DATE) VALUES(NEXT VALUE FOR seq_USER_ID,'PUSHPAKALA','RAJARAM','PK25','pushpaKal25a@gmail.com','9887765472','pushParichie44',GETDATE()); 
+
+--PROCEDURE TO CREATE RECORDS IN USER TABLE--
+CREATE PROCEDURE proc_USER_CREATE 
+@FIRST_NAME VARCHAR(30), 
+@LAST_NAME VARCHAR(30), 
+@USER_NAME VARCHAR(30), 
+@EMAIL_ID VARCHAR(30), 
+@PHONE_NO VARCHAR(10),
+@PASSWORD VARCHAR(15)
+AS
+BEGIN
+INSERT INTO tbl_USER(USER_ID,FIRST_NAME,LAST_NAME,USER_NAME,EMAIL_ID,PHONE_NO,PASSWORD,CREATED_DATE) VALUES (NEXT VALUE FOR seq_USER_ID,@FIRST_NAME, @LAST_NAME, @USER_NAME, @EMAIL_ID, @PHONE_NO,@PASSWORD,GETDATE())
+END;
+
+--PROCEDURE TO VERIFY LOGIN IN USER TABLE--
+CREATE PROCEDURE proc_USER_VERIFY  
+@EMAIL_ID VARCHAR(30), 
+@PASSWORD VARCHAR(15)
+AS
+BEGIN
+IF EXISTS(SELECT EMAIL_ID,PASSWORD FROM tbl_USER WHERE EMAIL_ID = @EMAIL_ID AND PASSWORD = @PASSWORD) 
+BEGIN
+UPDATE tbl_USER SET LAST_LOGIN = GETDATE() WHERE EMAIL_ID = @EMAIL_ID  
+PRINT 'LOGIN SUCCESFUL'
+END
+ELSE
+PRINT 'INVALID EMAILID/PASSWORD LOGIN UNSUCCESSFUL'
+END;
+
+--PROCEDURE TO UPDATE PASSWORD IN USER TABLE--
+CREATE PROCEDURE proc_USER_UPDATE_PASSWORD
+@EMAIL_ID VARCHAR(30), 
+@PASSWORD VARCHAR(15)
+AS
+BEGIN
+UPDATE tbl_USER SET PASSWORD=@PASSWORD, LAST_MODIFIED= GETDATE() WHERE EMAIL_ID=@EMAIL_ID; 
+END;
+
+--EXECUTING PROCEDURES--
+EXECUTE [DBO].[proc_USER_CREATE]
+@FIRST_NAME = 'SHRUTHI',
+@LAST_NAME = 'PANEERSELVAM',
+@USER_NAME = 'SHRUTHI233', 
+@EMAIL_ID = 'shrutzz.shruu@gmail.com',
+@PHONE_NO = '9655472337',
+@PASSWORD = 'shUZZtshruthi';
+
+EXECUTE [DBO].[proc_USER_UPDATE_PASSWORD]
+@EMAIL_ID = 'shrutzz.shruu@gmail.com',
+@PASSWORD = 'shruZZtshrUs76';
+
+EXECUTE [DBO].[proc_USER_VERIFY]
+@EMAIL_ID = 'shrutzz.shruu@gmail.com',
+@PASSWORD = 'shruZZtshrUs76';
+
+--DISPLAY USER TABLE--
+SELECT * FROM tbl_USER;
+
+--------------------------------------------------/PREETHI/--------------------------------------------------------------------------------------------------------------------
+--Home Page
+
+-----------------CATEGORY---------------------------
+
+ 
+
+CREATE TABLE tbl_CATEGORY (cat_id INT PRIMARY KEY, 
+                           cat_name NVARCHAR(50) NOT NULL, 
+                           cat_img IMAGE NOT NULL,
+                           IsActive BIT NOT NULL,
+                           created_date DATETIME,
+                           modified_time DATETIME
+                          )
+
+ SELECT*FROM tbl_CATEGORY
+
+-----------------SEQUENCE---------------------------
+
+ 
+
+CREATE SEQUENCE seq_CATEGORY_ID
+AS INT 
+START WITH 1 INCREMENT BY 1
+
+ 
+
+----------------SELECT ALL--------------------------
+
+ 
+ GO
+CREATE PROCEDURE SELECT_CATEGORY
+AS 
+BEGIN
+SELECT * FROM tbl_CATEGORY
+END
+
+ 
+
+EXEC SELECT_CATEGORY
+
+ 
+
+---------------SELECT-------------------------------
+
+ 
+
+CREATE PROCEDURE SELECT_PART_CATEGORY
+@cat_name NVARCHAR(50)
+AS 
+BEGIN
+SELECT * FROM tbl_CATEGORY WHERE cat_name = @cat_name
+END
+
+ 
+
+EXEC [dbo].[SELECT_PART_CATEGORY]
+@cat_name = 'CHINESE'
+
+ 
+
+---------------INSERT--------------------------------
+
+ 
+
+CREATE PROCEDURE INSERT_CATEGORY
+@cat_name NVARCHAR(50),
+@cat_img IMAGE,
+@IsActive BIT
+AS 
+BEGIN
+INSERT INTO tbl_CATEGORY(cat_id,cat_name,cat_img,IsActive,created_date,modified_time)
+VALUES(NEXT VALUE FOR seq_CATEGORY_ID,@cat_name, @cat_img, @IsActive, GETDATE(),GETDATE())
+END
+
+ 
+
+
+EXEC [dbo].[INSERT_CATEGORY]
+@cat_name = 'INDIAN',
+@cat_img = 'C:\Users\merit\Desktop\Preethi\Task 2\Images\indian.jpg',
+@IsActive = 1;
+
+ 
+
+--------------UPDATE-----------------------------
+
+ 
+
+CREATE PROCEDURE UPDATE_CATEGORY
+@cat_id INT,
+@cat_name NVARCHAR(50),
+@cat_img IMAGE,
+@IsActive BIT
+AS 
+BEGIN
+UPDATE tbl_CATEGORY SET cat_name = @cat_name, 
+                        cat_img = @cat_img, 
+                        IsActive = @IsActive, 
+                        created_date = GETDATE(), 
+                        modified_time = GETDATE() 
+                        WHERE 
+                        cat_id = @cat_id;
+END
+
+ 
+
+EXEC [dbo].[UPDATE_CATEGORY]
+@cat_id = 2,
+@cat_name = 'INDIAN',
+@cat_img = 'C:\Users\merit\Desktop\Preethi\Task 2\Images\indian.jpg',
+@IsActive = 0
+
+ 
+
+------------------DELETE------------------------
+
+ 
+
+CREATE PROCEDURE DELETE_CATEGORY
+@cat_id INT
+AS
+BEGIN
+DELETE FROM tbl_CATEGORY WHERE cat_id = @cat_id
+END
+
+ 
+
+EXEC [dbo].[DELETE_CATEGORY]
+@cat_id = 2
+
+ 
+
+
+--------------- --OUTLET------------------------
+
+ 
+
+CREATE TABLE tbl_OUTLET (id INT PRIMARY KEY, 
+                         o_name NVARCHAR(50) NOT NULL, 
+                         img IMAGE NOT NULL,
+                         IsActive BIT NOT NULL,
+                         created_date DATETIME,
+                         modified_time DATETIME
+                         )
+
+ 
+
+-----------------SEQUENCE--------------------------
+
+ 
+
+CREATE SEQUENCE seq_OUTLET_ID
+AS INT 
+START WITH 1 INCREMENT BY 1
+
+ 
+
+----------------SELECT ALL-------------------------
+
+ 
+
+CREATE PROCEDURE SELECT_OUTLET
+AS 
+BEGIN
+SELECT * FROM tbl_OUTLET
+END
+
+ 
+
+EXEC SELECT_OUTLET
+
+ 
+
+-----------------SELECT-----------------------------
+
+ 
+
+CREATE PROCEDURE SELECT_PART_OUTLET
+@o_name NVARCHAR(50)
+AS 
+BEGIN
+SELECT * FROM tbl_OUTLET WHERE o_name = @o_name
+END
+ 
+EXEC [dbo].[SELECT_PART_OUTLET]
+@o_name = 'ANNA NAGAR'
+
+ 
+
+-----------------INSERT-----------------------------
+
+ 
+
+CREATE PROCEDURE INSERT_OUTLET
+@o_name NVARCHAR(50),
+@img IMAGE,
+@IsActive BIT
+AS 
+BEGIN
+INSERT INTO tbl_OUTLET(id,o_name,img,IsActive,created_date,modified_time)
+VALUES(NEXT VALUE FOR seq_CATEGORY_ID,@o_name, @img, @IsActive, GETDATE(),GETDATE())
+END
+
+ 
+
+
+EXEC [dbo].[INSERT_OUTLET]
+@o_name = 'KATHIPARA',
+@img = 'C:\Users\merit\Desktop\Preethi\Task 2\Images\Kathipara.jpeg',
+@IsActive = 1;
+
+ 
+
+-----------------UPDATE-------------------------
+
+ 
+
+CREATE PROCEDURE UPDATE_OUTLET
+@id INT,
+@o_name NVARCHAR(50),
+@img IMAGE,
+@IsActive BIT
+AS 
+BEGIN
+UPDATE tbl_OUTLET SET o_name = @o_name, 
+                        img = @img, 
+                        IsActive = @IsActive, 
+                        created_date = GETDATE(), 
+                        modified_time = GETDATE() 
+                        WHERE 
+                        id = @id;
+END
+
+ 
+
+EXEC [dbo].[UPDATE_OUTLET]
+@id = 4,
+@o_name = 'KATHIPARA',
+@img = 'C:\Users\merit\Desktop\Preethi\Task 2\Images\Kathipara.jpeg',
+@IsActive = 0;
+
+ 
+
+----------------DELETE----------------------------
+
+ 
+
+CREATE PROCEDURE DELETE_OUTLET
+@id INT
+AS
+BEGIN
+DELETE FROM tbl_OUTLET WHERE id = @id
+END
+
+ 
+
+EXEC [dbo].[DELETE_OUTLET]
+@id = 4
+
+--------------------------------------------------/BALAJI/--------------------------------------------------------------------------------------------------------------------
+
+--RESTAURANT TABLE
+
+
+--Table Creation
+CREATE TABLE tbl_RESTAURANT(RESTAURANT_ID INT PRIMARY KEY,IMG IMAGE NOT NULL,
+NAME VARCHAR(100) NOT NULL,CUISINE VARCHAR(100) NOT NULL,cat_id INT, RATING float NOT NULL,DELIVERY_TIME VARCHAR(20),CREATED_DATE DATETIME,LAST_MODIFIED DATETIME,
+FOREIGN KEY(cat_id) REFERENCES tbl_CATEGORY(cat_id))
+
+ SELECT*FROM tbl_RESTAURANT
+
+--Creating Restaurant ID
+CREATE SEQUENCE RESTAURANT_ID AS INT START WITH 101 INCREMENT BY 1;
+
+
+--Inserting values in the table
+INSERT INTO tbl_RESTAURANT(RESTAURANT_ID,IMG,NAME,CUISINE,cat_id,RATING,DELIVERY_TIME,CREATED_DATE) VALUES(NEXT VALUE FOR RESTAURANT_ID,'‪C:\Users\Merit\Desktop\OIP.jpg','A2B','South Indian,North Indian','1','4.5','40 MINUTES',GETDATE());
+INSERT INTO tbl_RESTAURANT(RESTAURANT_ID,IMG,NAME,CUISINE,cat_id,RATING,DELIVERY_TIME,CREATED_DATE) VALUES(NEXT VALUE FOR RESTAURANT_ID,'‪C:\Users\Merit\Desktop\OIP.jpg','A2C','South Indian,North Indian','1','4','30 MINUTES',GETDATE());
+INSERT INTO tbl_RESTAURANT(RESTAURANT_ID,IMG,NAME,CUISINE,cat_id,RATING,DELIVERY_TIME,CREATED_DATE) VALUES(NEXT VALUE FOR RESTAURANT_ID,'‪C:\Users\Merit\Desktop\OIP.jpg','A2D','South Indian,North Indian','1','3.5','20 MINUTES',GETDATE());
+INSERT INTO tbl_RESTAURANT(RESTAURANT_ID,IMG,NAME,CUISINE,cat_id,RATING,DELIVERY_TIME,CREATED_DATE) VALUES(NEXT VALUE FOR RESTAURANT_ID,'‪C:\Users\Merit\Desktop\OIP.jpg','A2E','South Indian,North Indian','1','3','10 MINUTES',GETDATE());
+INSERT INTO tbl_RESTAURANT(RESTAURANT_ID,IMG,NAME,CUISINE,cat_id,RATING,DELIVERY_TIME,CREATED_DATE) VALUES(NEXT VALUE FOR RESTAURANT_ID,'‪C:\Users\Merit\Desktop\OIP.jpg','A2F','South Indian,North Indian','1','2.5','50 MINUTES',GETDATE());
+
+select * from tbl_RESTAURANT
+
+
+--STORED_PROCEDURE FOR ADDING RESTAURANT
+GO
+CREATE PROCEDURE ADD_RESTAURANT
+@IMG IMAGE,
+@NAME VARCHAR(100),
+@CUISINE VARCHAR(100),
+@cat_id INT,
+@RATING float,
+@DELIVERY_TIME VARCHAR(20)
+AS
+BEGIN
+INSERT INTO tbl_RESTAURANT(RESTAURANT_ID,IMG,NAME,CUISINE,cat_id,RATING,DELIVERY_TIME,CREATED_DATE) VALUES (NEXT VALUE FOR RESTAURANT_ID, @IMG, @NAME, @CUISINE,@cat_id,@RATING,@DELIVERY_TIME,GETDATE())
+END;
+
+
+EXEC [dbo].[ADD_RESTAURANT]
+@IMG ='‪C:\Users\Merit\Desktop\OIP.jpg',
+@NAME ='A2G',
+@CUISINE='South Indian,North Indian',
+@cat_id=1,
+@RATING=2.5,
+@DELIVERY_TIME='50 MINUTES';
+
+--STORED_PROCEDURE FOR UPDATING RESTAURANT
+GO
+CREATE PROCEDURE UPDATE_RESTAURANT
+@RESTAURANT_ID INT,
+@IMG IMAGE,
+@NAME VARCHAR(100),
+@CUISINE VARCHAR(100),
+@cat_id int,
+@RATING float,
+@DELIVERY_TIME VARCHAR(20)
+AS
+BEGIN
+UPDATE tbl_RESTAURANT SET IMG=@IMG,NAME=@NAME, CUISINE = @CUISINE,cat_id=@cat_id, RATING=@RATING, DELIVERY_TIME=@DELIVERY_TIME, LAST_MODIFIED= GETDATE() WHERE RESTAURANT_ID=@RESTAURANT_ID;
+END;
+
+
+EXEC [dbo].[UPDATE_RESTAURANT]
+@RESTAURANT_ID=103,
+@IMG ='‪C:\Users\Merit\Desktop\OIP.jpg',
+@NAME ='A2Z',
+@CUISINE='South Indian,North Indian',
+@cat_id=1,
+@RATING=2.5,
+@DELIVERY_TIME='50 MINUTES';
+
+select * from tbl_RESTAURANT
+
+
+--PROCEDURE TO DELETE
+GO
+CREATE PROCEDURE DELETE_RESTAURANT
+@RESTAURANT_ID INT
+AS
+BEGIN
+DELETE FROM tbl_RESTAURANT WHERE RESTAURANT_ID=@RESTAURANT_ID
+END
+
+--PROCEDURE TO DISPLAY
+GO
+CREATE PROCEDURE DISPLAY_RESTAURANT
+@RESTAURANT_ID INT
+AS
+BEGIN
+SELECT * FROM tbl_RESTAURANT WHERE RESTAURANT_ID=@RESTAURANT_ID
+END
+
+--------------------------------------------------/PUSHPAKALA/--------------------------------------------------------------------------------------------------------------------
+
+--MENU TABLE
+
+
+
+CREATE TABLE tbl_MENU(MENU_ID INT PRIMARY KEY,
+                      IMG IMAGE NOT NULL,
+                      NAME NVARCHAR(100) NOT NULL,
+                      M_DESCRIPTION VARCHAR(500) NOT NULL,
+                      PRICE FLOAT NOT NULL,
+                      M_STATUS BIT NOT NULL,
+                      RESTAURANT_ID INT REFERENCES tbl_RESTAURANT(RESTAURANT_ID),
+                      CREATED_DATE DATETIME,
+                      LAST_MODIFIED DATETIME
+                      )
+                       
+SELECT * FROM tbl_MENU
+
+ 
+
+--CREATE SEQUENCE FOR MENU_ID--
+CREATE SEQUENCE seq_MENU_ID AS INT START WITH 1 INCREMENT BY 1; 
+
+ 
+
+INSERT INTO tbl_MENU VALUES(NEXT VALUE FOR seq_MENU_ID,'C:\Users\Merit\Desktop\Pk\Sat\Day 14\steam_momo.png','Steam Momo','Momo stuffed with freshly chopped Vegetable?s (Onion, carrot, cabbage, beans & Coriander), herbs and Tinch of Spices (5 Pcs).',119,1,101,GETDATE(),GETDATE());
+INSERT INTO tbl_MENU VALUES(NEXT VALUE FOR seq_MENU_ID,'C:\Users\Merit\Desktop\Pk\Sat\Day 14\Chocolate Momo (1 Pc).png','Chocolate Momo ','Crunchy Momo filled with Brownie, topped with Chocolate Fudge & Garnished with Chocolate flakes. ',45,1,101,GETDATE(),GETDATE());
+INSERT INTO tbl_MENU VALUES(NEXT VALUE FOR seq_MENU_ID,'C:\Users\Merit\Desktop\Pk\Sat\Day 14\Paneer Pan Fried Momo.png','Paneer Pan Fried Momo','Hot & Spongy Paneer Fried Momo Tossed in Spicy Schezwan Sauce and Garnished with Coriander',166,1,101,GETDATE(),GETDATE());
+INSERT INTO tbl_MENU VALUES(NEXT VALUE FOR seq_MENU_ID,'C:\Users\Merit\Desktop\Pk\Sat\Day 14\Chicken_Pan_Fried_Momo.png','Chicken Pan Fried Momo','Hot & Crispy Fried Chicken Momo Tossed in Spicy Schezwan Sauce and Garnished with Coriander',156,1,101,GETDATE(),GETDATE());
+
+ 
+
+---------------------------------------------
+     --- PROCEDURE : SELECT_MENU ---
+---------------------------------------------
+CREATE PROCEDURE SELECT_ALL
+AS
+BEGIN
+SELECT * FROM TBL_MENU
+END
+
+ 
+
+EXEC SELECT_ALL;
+
+ 
+
+----------------------------------------
+
+ 
+
+CREATE PROCEDURE SELECT_MENU
+@NAME VARCHAR(100)
+AS
+BEGIN
+SELECT * FROM tbl_MENU WHERE  NAME=@NAME
+END
+
+ 
+
+ 
+
+EXECUTE [DBO].[SELECT_MENU]
+@NAME = 'steam momo'
+
+ 
+
+
+---------------------------------------------
+      --- PROCEDURE : INSERT_MENU ---
+---------------------------------------------
+CREATE PROCEDURE INSERT_MENU
+@IMG IMAGE,
+@NAME VARCHAR(100),
+@M_DESCRIPTION VARCHAR(100),
+@PRICE float,
+@M_STATUS BIT,
+@RESTAURANT_ID INT
+AS
+BEGIN
+INSERT INTO tbl_MENU(MENU_ID,IMG,NAME,M_DESCRIPTION,PRICE,M_STATUS,RESTAURANT_ID,CREATED_DATE,LAST_MODIFIED) 
+                           VALUES 
+                          (NEXT VALUE FOR seq_MENU_ID, @IMG, @NAME, @M_DESCRIPTION,@PRICE,@M_STATUS,@RESTAURANT_ID,GETDATE(),GETDATE())
+END;
+
+ 
+
+EXECUTE [DBO].[INSERT_MENU]
+@IMG='C:\Users\Merit\Desktop\Pk\Sat\Day 14\Chicken Schezwan Steam Momo.png',
+@NAME='Chicken Schezwan Momo',
+@M_DESCRIPTION='Minced soft Juicy boneless Chicken, Coriander & Celery leaf cooked in blend of herbs and spices comes with hot Schezwan flavour',
+@PRICE=145,
+@M_STATUS=1,
+@RESTAURANT_ID=101;
+
+ 
+
+EXEC SELECT_ALL;
+
+ 
+
+---------------------------------------------
+     --- PROCEDURE : UPDATE_MENU ---
+---------------------------------------------
+
+ 
+
+CREATE PROCEDURE UPDATE_MENU
+@MENU_ID INT,
+@IMG IMAGE,
+@NAME VARCHAR(100),
+@M_DESCRIPTION VARCHAR(100),
+@PRICE float,
+@M_STATUS BIT,
+@RESTAURANT_ID INT
+AS
+BEGIN
+UPDATE tbl_MENU SET IMG=@IMG,
+                    NAME=@NAME, 
+                    M_DESCRIPTION = @M_DESCRIPTION, 
+                    PRICE=@PRICE, 
+                    M_STATUS=@M_STATUS, 
+                    RESTAURANT_ID=@RESTAURANT_ID,
+                    CREATED_DATE=GETDATE(),
+                    LAST_MODIFIED= GETDATE() 
+              WHERE MENU_ID=@MENU_ID; 
+END;
+
+ 
+
+EXECUTE [DBO].[UPDATE_MENU]
+@MENU_ID=5,
+@IMG='C:\Users\Merit\Desktop\Pk\Sat\Day 14\Chicken Schezwan Steam Momo.png',
+@NAME='Chicken Schezwan Momo',
+@M_DESCRIPTION='Minced soft Juicy boneless Chicken, Coriander & Celery leaf cooked in blend of herbs and spices comes with hot Schezwan flavour',
+@PRICE=200,
+@M_STATUS=1,
+@RESTAURANT_ID=101;
+
+ 
+
+EXEC SELECT_ALL;
+
+
+---------------------------------------------
+     --- PROCEDURE : DELETE_MENU ---
+---------------------------------------------
+CREATE PROCEDURE DELETE_MENU
+@MENU_ID INT
+AS
+BEGIN
+DELETE FROM TBL_MENU WHERE MENU_ID=@MENU_ID
+END
+
+ 
+
+EXECUTE [DBO].[DELETE_MENU]
+@MENU_ID = 5
+
+ 
+
+EXEC SELECT_ALL;
+
+--------------------------------------------------/HEMANTH/--------------------------------------------------------------------------------------------------------------------
+--Discount Table
+
+--------------
+--DISCOUNT TABLE 
+CREATE TABLE tbl_DISCOUNT (DISCOUNT_ID INT PRIMARY KEY, DISCOUNT_VALUE INT, COUPON_CODE VARCHAR(20),VALID_TILL DATETIME)          
+SELECT*FROM tbl_DISCOUNT
+
+
+
+CREATE SEQUENCE seq_DISCOUNT_ID AS INT START WITH 1 INCREMENT BY 1;
+
+ 
+
+INSERT INTO tbl_DISCOUNT VALUES(NEXT VALUE FOR seq_DISCOUNT_ID, 100,'ZAPCAXTY','2021-09-01');
+INSERT INTO tbl_DISCOUNT VALUES(NEXT VALUE FOR seq_DISCOUNT_ID, 100,'ZAPCAXTY','2021-09-01');
+INSERT INTO tbl_DISCOUNT VALUES(NEXT VALUE FOR seq_DISCOUNT_ID, 100,'ZAPCAXTY','2021-09-01');
+INSERT INTO tbl_DISCOUNT VALUES(NEXT VALUE FOR seq_DISCOUNT_ID, 100,'ZAPCAXTY','2021-09-01');
+INSERT INTO tbl_DISCOUNT VALUES(NEXT VALUE FOR seq_DISCOUNT_ID, 100,'ZAPCAXTY','2021-09-01');
+
+ 
+
+ 
+
+SELECT*FROM tbl_DISCOUNT
+
+------------------
+--STORED PROCEDURE
+------------------
+
+
+
+--PROCEDURE TO INSERT
+
+GO
+CREATE PROCEDURE SP_DISCOUNT_INSERT
+@DISCOUNT_VALUE INT,
+@COUPON_CODE VARCHAR(20),
+@VALID_TILL DATETIME
+
+ 
+
+
+AS
+BEGIN
+INSERT INTO
+tbl_DISCOUNT (DISCOUNT_ID,DISCOUNT_VALUE,COUPON_CODE, VALID_TILL)
+VALUES(NEXT VALUE FOR seq_DISCOUNT_ID,@DISCOUNT_VALUE,@COUPON_CODE, @VALID_TILL)
+END
+
+ 
+
+------------
+--------------
+------------
+--STORED_PROCEDURE FOR UPDATING DISCOUNTS
+GO
+CREATE PROCEDURE SP_DISCOUNT_UPDATE
+@DISCOUNT_ID INT,
+@DISCOUNT_VALUE INT,
+@COUPON_CODE VARCHAR, 
+@VALID_TILL DATETIME
+AS
+BEGIN
+UPDATE tbl_DISCOUNT SET DISCOUNT_VALUE=@DISCOUNT_VALUE,COUPON_CODE=@COUPON_CODE ,VALID_TILL=@VALID_TILL WHERE DISCOUNT_ID =@DISCOUNT_ID
+END;
+
+ 
+
+--STORED_PROCEDURE FOR DISPLAY DISCOUNTS
+GO
+CREATE PROCEDURE SP_DISPLAY_DISCOUNT
+@DISCOUNT_ID INT
+AS
+BEGIN
+SELECT*FROM tbl_DISCOUNT WHERE DISCOUNT_ID = @DISCOUNT_ID
+END
+----------------------------------------------------------------------------------------------------------------------
+
+--Order Table
+--CREATING ORDER TABLE
+
+CREATE TABLE tbl_ORDERS (ORDER_ID INT PRIMARY KEY, USER_ID INT NOT NULL, ORDER_DATE DATETIME NOT NULL , MENU_ID INT, TOTAL_AMOUNT FLOAT,DISCOUNT_ID INT, DISCOUNTED_AMOUNT INT, PAID_AMOUNT INT, FOREIGN KEY(USER_ID) REFERENCES tbl_USER (USER_ID),FOREIGN KEY(MENU_ID) REFERENCES tbl_MENU (MENU_ID),FOREIGN KEY(DISCOUNT_ID) REFERENCES tbl_DISCOUNT (DISCOUNT_ID)  ,CREATED_DATE DATETIME,LAST_MODIFIED DATETIME)
+
+--CREATE SEQUENCE FOR ORDER_ID--
+SELECT*FROM tbl_ORDERS
+
+CREATE SEQUENCE seq_ORDER_ID AS INT START WITH 1 INCREMENT BY 1;
+
+
+INSERT INTO tbl_ORDERS VALUES(NEXT VALUE FOR seq_ORDER_ID, 1001,GETDATE(),1, 1000,1,90,900,GETDATE(),GETDATE());
+INSERT INTO tbl_ORDERS VALUES(NEXT VALUE FOR seq_ORDER_ID, 1002,GETDATE(),2, 1500,2,100,1400,GETDATE(),GETDATE());
+INSERT INTO tbl_ORDERS VALUES(NEXT VALUE FOR seq_ORDER_ID, 1003,GETDATE(),3, 1000,3,90,900,GETDATE(),GETDATE());
+INSERT INTO tbl_ORDERS VALUES(NEXT VALUE FOR seq_ORDER_ID, 1004,GETDATE(),4, 1000,4,90,900,GETDATE(),GETDATE());
+
+SELECT * FROM tbl_ORDERS
+
+
+--PROCEDURE TO INSERT
+
+GO
+CREATE PROCEDURE SP_INSERT_ORDERS
+
+ 
+
+@ORDER_ID INT,  
+@USER_ID INT,   
+@MENU_ID INT,
+@TOTAL_AMOUNT FLOAT, 
+@DISCOUNTED_AMOUNT INT, 
+@PAID_AMOUNT INT 
+AS
+BEGIN
+INSERT INTO
+tbl_ORDERS (ORDER_ID, USER_ID, ORDER_DATE, MENU_ID, TOTAL_AMOUNT, DISCOUNTED_AMOUNT, PAID_AMOUNT , CREATED_DATE )
+VALUES(@ORDER_ID,@USER_ID ,GETDATE(),@MENU_ID,@TOTAL_AMOUNT,@DISCOUNTED_AMOUNT,@PAID_AMOUNT,GETDATE())
+END
+
+ 
+
+ 
+
+
+--STORED_PROCEDURE FOR UPDATING ORDERS
+GO
+CREATE PROCEDURE SP_UPDATE_ORDER
+@ORDER_ID INT,
+@TOTAL_AMOUNT FLOAT, 
+@DISCOUNTED_AMOUNT INT, 
+@PAID_AMOUNT INT 
+
+ 
+
+AS
+BEGIN
+UPDATE tbl_ORDERS  SET TOTAL_AMOUNT=@TOTAL_AMOUNT, DISCOUNTED_AMOUNT=@DISCOUNTED_AMOUNT,LAST_MODIFIED=GETDATE() WHERE ORDER_ID =@ORDER_ID;
+END;
+
+ 
+
+ 
+
+
+--PROCEDURE TO DISPLAY
+GO
+CREATE PROCEDURE SP_DISPLAY_ORDER
+@ORDER_ID INT
+AS
+BEGIN
+SELECT * FROM tbl_ORDERS WHERE ORDER_ID=@ORDER_ID
+END
+
+ 
+
+
+SELECT * FROM tbl_ORDERS
+
+
+
+--PROCEDURE TO VERIFY COUPON CODE  IN  TABLE--
+CREATE PROCEDURE COUPON_CODE 
+@COUPON_CODE VARCHAR(30) 
+
+ 
+
+AS
+BEGIN
+IF EXISTS(SELECT COUPON_CODE FROM tbl_ORDER WHERE COUPON_CODE = @COUPON_CODE ) 
+BEGIN 
+PRINT 'Discount SUCCESFUL'
+END
+ELSE
+PRINT 'INVALID Copoun CODE'
+END;
